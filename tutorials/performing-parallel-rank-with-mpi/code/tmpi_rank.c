@@ -31,7 +31,7 @@ void *gather_numbers_to_root(void *number, MPI_Datatype datatype, MPI_Comm comm)
   // Allocate an array on the root process of a size depending on the MPI datatype being used.
   int datatype_size;
   MPI_Type_size(datatype, &datatype_size);
-  void *gathered_numbers;
+  void *gathered_numbers=NULL;
   if (comm_rank == 0) {
     gathered_numbers = malloc(datatype_size * comm_size);
   }
@@ -82,7 +82,7 @@ int *get_ranks(void *gathered_numbers, int gathered_number_count, MPI_Datatype d
   int i;
   for (i = 0; i < gathered_number_count; i++) {
     comm_rank_numbers[i].comm_rank = i;
-    memcpy(&(comm_rank_numbers[i].number), gathered_numbers + (i * datatype_size), datatype_size);
+    memcpy(&(comm_rank_numbers[i].number), (char*)gathered_numbers + (i * datatype_size), datatype_size);
   }
 
   // Sort the comm rank numbers based on the datatype
